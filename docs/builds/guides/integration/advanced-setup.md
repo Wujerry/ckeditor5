@@ -257,7 +257,7 @@ ClassicEditor.defaultConfig = {
 			'link',
 			'bulletedList',
 			'numberedList',
-			'imageUpload',
+			'uploadImage',
 			'blockQuote',
 			'undo',
 			'redo'
@@ -344,7 +344,7 @@ ClassicEditor
 			'link',
 			'bulletedList',
 			'numberedList',
-			'imageUpload',
+			'uploadImage',
 			'blockQuote',
 			'undo',
 			'redo'
@@ -602,7 +602,7 @@ index c57e371..04fc9fe 100644
 Once you changed the `src/ckeditor.js` and `webpack.config.js` files it is time to rebuild the build:
 
 ```bash
-yarn run build
+npm run build
 ```
 
 Finally, when webpack finishes compiling your super build, you can change the `samples/index.html` file to test both editors:

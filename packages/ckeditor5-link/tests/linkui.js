@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2020, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -12,6 +12,7 @@ import isRange from '@ckeditor/ckeditor5-utils/src/dom/isrange';
 import { keyCodes } from '@ckeditor/ckeditor5-utils/src/keyboard';
 import { getData as getModelData, setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model';
 import { getData as getViewData } from '@ckeditor/ckeditor5-engine/src/dev-utils/view';
+import env from '@ckeditor/ckeditor5-utils/src/env';
 
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
 import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote';
@@ -788,11 +789,28 @@ describe( 'LinkUI', () => {
 
 			editor.keystrokes.press( {
 				keyCode: keyCodes.k,
-				ctrlKey: true,
+				ctrlKey: !env.isMac,
+				metaKey: env.isMac,
 				preventDefault: sinon.spy(),
 				stopPropagation: sinon.spy()
 			} );
 			sinon.assert.calledWithExactly( spy, true );
+		} );
+
+		it( 'should not show the UI on Ctrl+K keystroke on content with LinkCommand disabled', () => {
+			const spy = testUtils.sinon.stub( linkUIFeature, '_showUI' ).returns( {} );
+			const command = editor.commands.get( 'link' );
+			command.isEnabled = false;
+
+			editor.keystrokes.press( {
+				keyCode: keyCodes.k,
+				ctrlKey: !env.isMac,
+				metaKey: env.isMac,
+				preventDefault: sinon.spy(),
+				stopPropagation: sinon.spy()
+			} );
+
+			sinon.assert.notCalled( spy );
 		} );
 
 		it( 'should prevent default action on Ctrl+K keystroke', () => {
@@ -801,7 +819,8 @@ describe( 'LinkUI', () => {
 
 			editor.keystrokes.press( {
 				keyCode: keyCodes.k,
-				ctrlKey: true,
+				ctrlKey: !env.isMac,
+				metaKey: env.isMac,
 				preventDefault: preventDefaultSpy,
 				stopPropagation: stopPropagationSpy
 			} );
@@ -822,7 +841,8 @@ describe( 'LinkUI', () => {
 
 			editor.keystrokes.press( {
 				keyCode: keyCodes.k,
-				ctrlKey: true,
+				ctrlKey: !env.isMac,
+				metaKey: env.isMac,
 				preventDefault: sinon.spy(),
 				stopPropagation: sinon.spy()
 			} );
@@ -844,7 +864,8 @@ describe( 'LinkUI', () => {
 
 			editor.keystrokes.press( {
 				keyCode: keyCodes.k,
-				ctrlKey: true,
+				ctrlKey: !env.isMac,
+				metaKey: env.isMac,
 				preventDefault: sinon.spy(),
 				stopPropagation: sinon.spy()
 			} );
@@ -853,7 +874,8 @@ describe( 'LinkUI', () => {
 
 			editor.keystrokes.press( {
 				keyCode: keyCodes.k,
-				ctrlKey: true,
+				ctrlKey: !env.isMac,
+				metaKey: env.isMac,
 				preventDefault: sinon.spy(),
 				stopPropagation: sinon.spy()
 			} );
@@ -1092,6 +1114,18 @@ describe( 'LinkUI', () => {
 				sinon.assert.calledOnce( selectSpy );
 			} );
 
+			it( 'should disable CSS transitions before showing the form to avoid unnecessary animations' +
+				'(and then enable them again)', () => {
+				const addSpy = sinon.spy( balloon, 'add' );
+				const disableCssTransitionsSpy = sinon.spy( formView, 'disableCssTransitions' );
+				const enableCssTransitionsSpy = sinon.spy( formView, 'enableCssTransitions' );
+				const selectSpy = sinon.spy( formView.urlInputView.fieldView, 'select' );
+
+				actionsView.fire( 'edit' );
+
+				sinon.assert.callOrder( disableCssTransitionsSpy, addSpy, selectSpy, enableCssTransitionsSpy );
+			} );
+
 			it( 'should execute unlink command on actionsView#unlink event', () => {
 				const executeSpy = testUtils.sinon.spy( editor, 'execute' );
 
@@ -1135,7 +1169,8 @@ describe( 'LinkUI', () => {
 			it( 'should add the #formView upon Ctrl+K keystroke press', () => {
 				const keyEvtData = {
 					keyCode: keyCodes.k,
-					ctrlKey: true,
+					ctrlKey: !env.isMac,
+					metaKey: env.isMac,
 					preventDefault: sinon.spy(),
 					stopPropagation: sinon.spy()
 				};
@@ -1304,6 +1339,19 @@ describe( 'LinkUI', () => {
 
 					return editor.destroy();
 				} );
+			} );
+
+			it( 'should detect an email on submitting the form and add "mailto:" protocol automatically to the provided value ' +
+				'even when defaultProtocol is undefined', () => {
+				setModelData( editor.model, '<paragraph>[email@example.com]</paragraph>' );
+
+				formView.urlInputView.fieldView.value = 'email@example.com';
+				formView.fire( 'submit' );
+
+				expect( formView.urlInputView.fieldView.value ).to.equal( 'mailto:email@example.com' );
+				expect( getModelData( editor.model ) ).to.equal(
+					'<paragraph>[<$text linkHref="mailto:email@example.com">email@example.com</$text>]</paragraph>'
+				);
 			} );
 
 			it( 'should not add an email protocol when given provided within the value' +
