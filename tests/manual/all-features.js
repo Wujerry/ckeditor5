@@ -28,6 +28,7 @@ import Mention from '@ckeditor/ckeditor5-mention/src/mention';
 import PageBreak from '@ckeditor/ckeditor5-page-break/src/pagebreak';
 import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefromoffice';
 import RemoveFormat from '@ckeditor/ckeditor5-remove-format/src/removeformat';
+import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting';
 import SpecialCharacters from '@ckeditor/ckeditor5-special-characters/src/specialcharacters';
 import SpecialCharactersEssentials from '@ckeditor/ckeditor5-special-characters/src/specialcharactersessentials';
 import Strikethrough from '@ckeditor/ckeditor5-basic-styles/src/strikethrough';
@@ -35,6 +36,7 @@ import Subscript from '@ckeditor/ckeditor5-basic-styles/src/subscript';
 import Superscript from '@ckeditor/ckeditor5-basic-styles/src/superscript';
 import TableCellProperties from '@ckeditor/ckeditor5-table/src/tablecellproperties';
 import TableProperties from '@ckeditor/ckeditor5-table/src/tableproperties';
+import TableCaption from '@ckeditor/ckeditor5-table/src/tablecaption';
 import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformation';
 import TextPartLanguage from '@ckeditor/ckeditor5-language/src/textpartlanguage';
 import TodoList from '@ckeditor/ckeditor5-list/src/todolist';
@@ -50,13 +52,13 @@ ClassicEditor
 		plugins: [
 			ArticlePluginSet, Underline, Strikethrough, Superscript, Subscript, Code, RemoveFormat,
 			FontColor, FontBackgroundColor, FontFamily, FontSize, Highlight,
-			CodeBlock, TodoList, ListStyle, TableProperties, TableCellProperties,
+			CodeBlock, TodoList, ListStyle, TableProperties, TableCellProperties, TableCaption,
 			EasyImage, ImageResize, LinkImage, AutoImage, HtmlEmbed,
 			AutoLink, Mention, TextTransformation,
 			Alignment, IndentBlock,
 			PasteFromOffice, PageBreak, HorizontalLine,
 			SpecialCharacters, SpecialCharactersEssentials, WordCount,
-			ImageUpload, CloudServices, TextPartLanguage
+			ImageUpload, CloudServices, TextPartLanguage, SourceEditing
 		],
 		toolbar: [
 			'heading',
@@ -77,11 +79,15 @@ ClassicEditor
 			'|',
 			'textPartLanguage',
 			'|',
+			'sourceEditing',
+			'|',
 			'undo', 'redo'
 		],
 		cloudServices: CS_CONFIG,
 		table: {
-			contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties' ]
+			contentToolbar: [
+				'tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties', 'toggleTableCaption'
+			]
 		},
 		image: {
 			styles: [
@@ -107,8 +113,8 @@ ClassicEditor
 				}
 			],
 			toolbar: [
-				'imageTextAlternative', '|',
-				'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight', '|',
+				'imageTextAlternative', 'toggleImageCaption', '|',
+				'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', 'imageStyle:side', '|',
 				'resizeImage'
 			],
 			insert: {

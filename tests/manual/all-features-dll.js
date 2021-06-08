@@ -40,6 +40,7 @@ import '@ckeditor/ckeditor5-page-break/build/page-break';
 import '@ckeditor/ckeditor5-paste-from-office/build/paste-from-office';
 import '@ckeditor/ckeditor5-remove-format/build/remove-format';
 import '@ckeditor/ckeditor5-word-count/build/word-count';
+import '@ckeditor/ckeditor5-source-editing/build/source-editing';
 
 import { CS_CONFIG } from '@ckeditor/ckeditor5-cloud-services/tests/_utils/cloud-services-config';
 
@@ -55,7 +56,7 @@ const { FontColor, FontFamily, FontSize, FontBackgroundColor } = window.CKEditor
 const { Indent, IndentBlock } = window.CKEditor5.indent;
 const { List, ListStyle, TodoList } = window.CKEditor5.list;
 const { SpecialCharacters, SpecialCharactersEssentials } = window.CKEditor5.specialCharacters;
-const { Table, TableToolbar, TableCellProperties, TableProperties } = window.CKEditor5.table;
+const { Table, TableToolbar, TableCellProperties, TableProperties, TableCaption } = window.CKEditor5.table;
 const { Alignment } = window.CKEditor5.alignment;
 const { Autoformat } = window.CKEditor5.autoformat;
 const { BlockQuote } = window.CKEditor5.blockQuote;
@@ -74,6 +75,7 @@ const { PasteFromOffice } = window.CKEditor5.pasteFromOffice;
 const { RemoveFormat } = window.CKEditor5.removeFormat;
 const { TextPartLanguage } = window.CKEditor5.language;
 const { WordCount } = window.CKEditor5.wordCount;
+const { SourceEditing } = window.CKEditor5.sourceEditing;
 
 const { Plugin } = window.CKEditor5.core;
 const { ButtonView } = window.CKEditor5.ui;
@@ -127,9 +129,10 @@ const config = {
 		PasteFromOffice,
 		RemoveFormat,
 		SpecialCharacters, SpecialCharactersEssentials,
-		Table, TableToolbar, TableCellProperties, TableProperties,
+		Table, TableToolbar, TableCellProperties, TableProperties, TableCaption,
 		TextPartLanguage,
-		WordCount
+		WordCount,
+		SourceEditing
 	],
 	toolbar: [
 		'heading',
@@ -152,11 +155,13 @@ const config = {
 		'|',
 		'textPartLanguage',
 		'|',
+		'sourceEditing',
+		'|',
 		'undo', 'redo'
 	],
 	cloudServices: CS_CONFIG,
 	table: {
-		contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties' ]
+		contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties', 'toggleTableCaption' ]
 	},
 	image: {
 		styles: [
@@ -182,8 +187,8 @@ const config = {
 			}
 		],
 		toolbar: [
-			'imageTextAlternative', '|',
-			'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight', '|',
+			'imageTextAlternative', 'toggleImageCaption', '|',
+			'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', 'imageStyle:side', '|',
 			'resizeImage'
 		],
 		insert: {
